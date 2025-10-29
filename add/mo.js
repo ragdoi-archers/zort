@@ -549,6 +549,25 @@
    */
   var Howl = function(o) {
 	  
+	  // 🔧 StreamingAssets düzeltmesi (custom patch)
+(function() {
+  const cdnBase = "https://cdn.jsdelivr.net/gh/ragdoi-archers/zort@main/";
+  const oldHowlInit = Howl.prototype.init;
+
+  Howl.prototype.init = function(o) {
+    // Eğer src sadece dosya adı veya boşsa, StreamingAssets ile tamamla
+    if (o.src && typeof o.src === "string" && !o.src.startsWith("http")) {
+      o.src = cdnBase + o.src;
+    } else if (Array.isArray(o.src)) {
+      o.src = o.src.map(src => src.startsWith("http") ? src : cdnBase + src);
+    }
+
+    // Devam et
+    return oldHowlInit.call(this, o);
+  };
+})();
+
+	  
 
     var self = this;
 
